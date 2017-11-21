@@ -510,7 +510,7 @@ Delegates.prototype.getDelegates = function (query, cb) {
 		var realLimit = Math.min(offset + limit, count);
 
 		var lastBlock   = modules.blocks.lastBlock.get(),
-		    totalSupply = __private.blockReward.calcSupply(lastBlock.height);
+			totalSupply = __private.blockReward.calcSupply(lastBlock.height);
 
 		for (var i = 0; i < delegates.length; i++) {
 			// TODO: 'rate' property is deprecated and need to be removed after transitional period
@@ -868,7 +868,7 @@ Delegates.prototype.shared = {
 					if (data.sortMethod === 'ASC') {
 						return sorta - sortb;
 					} else {
-				 	return sortb - sorta;
+						return sortb - sorta;
 					}
 				}
 
