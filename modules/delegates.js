@@ -435,11 +435,9 @@ __private.loadDelegates = function (cb) {
 // Public methods
 
 /**
- * Gets delegate list based on input function by vote and changes order.
- * @param {number} height
- * @param {function} source - Source function for get delegates.
+ * Execute query that generates delegates list of current round.
  * @param {function} cb - Callback function.
- * @returns {setImmediateCallback} err | truncated delegate list.
+ * @returns {setImmediateCallback} err | generated delegate list
  */
 Delegates.prototype.generateDelegateList = function (cb) {
 	library.db.query(sql.delegateList).then(function (result) {
