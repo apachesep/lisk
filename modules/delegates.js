@@ -72,50 +72,8 @@ function Delegates (cb, scope) {
 }
 
 // Private methods
-/**
- * Gets delegate public keys sorted by vote descending.
- * @private
- * @param {function} cb - Callback function.
- * @returns {setImmediateCallback} 
- */
-__private.getKeysSortByVote = function (cb) {
-	modules.accounts.getAccounts({
-		isDelegate: 1,
-		sort: {'vote': -1, 'publicKey': 1},
-		limit: slots.delegates
-	}, ['publicKey'], function (err, rows) {
-		if (err) {
-			return setImmediate(cb, err);
-		}
-		return setImmediate(cb, null, rows.map(function (el) {
-			return el.publicKey;
-		}));
-	});
-};
 
 /**
- * Gets delegate public keys from previous round, sorted by vote descending.
- * @private
- * @param {function} cb - Callback function.
- * @returns {setImmediateCallback}
- */
-__private.getDelegatesFromPreviousRound = function (cb) {
-	// ToDo: Get delegates from previous round - query doesn not exist
-	// library.db.query(sql.getDelegatesSnapshot, {limit: slots.delegates}).then(function (rows) {
-	// 	var delegatesPublicKeys = [];
-	// 	rows.forEach(function (row) {
-	// 		delegatesPublicKeys.push(row.publicKey.toString('hex'));
-	// 	});
-	// 	return setImmediate(cb, null, delegatesPublicKeys);
-	// }).catch(function (err) {
-	// 	library.logger.error(err.stack);
-	// 	return setImmediate(cb, 'getDelegatesSnapshot database query failed');
-	// });
-	return setImmediate(cb, 'getDelegatesSnapshot query not implemented');
-};
-
-/**
-
  * Generates delegate list and checks if block generator publicKey
  * matches delegate id.
  * @param {block} block
