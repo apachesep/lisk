@@ -4,7 +4,7 @@ BEGIN;
 CREATE FUNCTION perform_delegates_snapshot() RETURNS TRIGGER LANGUAGE PLPGSQL AS $$
 	BEGIN
 	    EXECUTE 'DROP TABLE IF EXISTS delegates_snapshot';
-        EXECUTE 'CREATE TABLE delegates_snapshot AS SELECT address, pk, voters_balance FROM delegates';
+        EXECUTE 'CREATE TABLE delegates_snapshot AS SELECT address, pk, rank FROM delegates';
 	RETURN NEW;
 END $$;
 
