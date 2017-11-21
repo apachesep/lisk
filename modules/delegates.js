@@ -101,19 +101,19 @@ __private.validateBlockSlot = function (block, delegatesList, cb) {
  * @returns {setImmediateCallback} error | cb | object {time, keypair}.
  */
 __private.getBlockSlotData = function (slot, height, cb) {
-    var currentSlot = slot;
-    var lastSlot = slots.getLastSlot(currentSlot);
+	var currentSlot = slot;
+	var lastSlot = slots.getLastSlot(currentSlot);
 
-    for (; currentSlot < lastSlot; currentSlot += 1) {
-        var delegate_pos = currentSlot % slots.delegates;
-        var delegate_id = __private.delegatesList[delegate_pos];
+	for (; currentSlot < lastSlot; currentSlot += 1) {
+		var index = currentSlot % slots.delegates;
+		var delegatePublicKey = __private.delegatesList[index];
 
-        if (delegate_id && __private.keypairs[delegate_id]) {
-            return setImmediate(cb, null, {time: slots.getSlotTime(currentSlot), keypair: __private.keypairs[delegate_id]});
-        }
-    }
+		if (delegatePublicKey && __private.keypairs[delegatePublicKey]) {
+			return setImmediate(cb, null, {time: slots.getSlotTime(currentSlot), keypair: __private.keypairs[delegatePublicKey]});
+		}
+	}
 
-    return setImmediate(cb, null, null);
+	return setImmediate(cb, null, null);
 };
 
 /**
