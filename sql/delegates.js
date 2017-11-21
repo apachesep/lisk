@@ -19,6 +19,7 @@ var DelegatesSql = {
   count: 'SELECT COUNT(*)::int FROM delegates',
 
   delegateList: 'SELECT getDelegatesList() AS list;',
+  delegateListOfPreviousRound: 'SELECT generateDelegatesList(${round}, ARRAY(SELECT ENCODE(pk, \'hex\') AS pk FROM delegates_snapshot ORDER BY rank ASC LIMIT 101)) AS list;',
 
   search: function (params) {
     var sql = [
