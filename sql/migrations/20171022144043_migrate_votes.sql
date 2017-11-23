@@ -6,20 +6,20 @@ BEGIN
 END
 $$;
 
-/* Votes Details */
+-- Rename columns on votes_details table
 ALTER TABLE votes_details RENAME tx_id to transaction_id;
 ALTER TABLE votes_details RENAME delegate_pk to delegate_public_key;
 
-/* Votes */
+-- Rename votes table to votes_old
 ALTER TABLE votes RENAME TO votes_old;
 
 CREATE TABLE "public".votes(transaction_id varchar(20) NOT NULL,
   public_key bytea NOT NULL,
   votes text NOT NULL);
 
---Populate votes table based on old data
 
 
+-- Populate votes table using data from votes_old table
 INSERT INTO "public".votes(transaction_id, public_key, votes)
 SELECT t."transaction_id",t."sender_public_key",v.votes
 FROM votes_old v, transactions t
@@ -43,12 +43,12 @@ CREATE TRIGGER vote_insert AFTER
 INSERT ON votes
 FOR EACH ROW EXECUTE PROCEDURE vote_insert();
 
-  -- votes indexes
   CREATE INDEX idx_votes_public_key
   ON "public".votes ( public_key );
 
   CREATE INDEX idx_votes_transaction_id
   ON "public".votes ( transaction_id );
+-- Create votes indexes
 
 
 END;
