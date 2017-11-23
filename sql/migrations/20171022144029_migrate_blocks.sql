@@ -18,7 +18,6 @@ ALTER TABLE blocks RENAME "payloadHash" TO "payload_hash";
 ALTER TABLE blocks RENAME "generatorPublicKey" TO "generator_public_key";
 ALTER TABLE blocks RENAME "blockSignature" TO "signature";
 
-
 -- Blocks indexes/constraints
 ALTER SEQUENCE "public"."blocks_rowId_seq" RENAME TO "seq_blocks_row_id";
 ALTER INDEX "blocks_pkey" RENAME TO "idx_blocks_pkey";
@@ -33,11 +32,9 @@ ALTER INDEX "blocks_rowId" RENAME TO "idx_blocks_row_id";
 ALTER INDEX "blocks_totalAmount" RENAME TO "idx_blocks_total_amount";
 ALTER INDEX "blocks_totalFee" RENAME TO "idx_blocks_total_fee";
 ALTER TABLE "public".blocks DROP CONSTRAINT "blocks_previousBlock_fkey";
-
-ALTER TABLE "public".blocks ADD CONSTRAINT "fkey_blocks_previous_block_id_fkey" FOREIGN KEY ( "previous_block_id" ) REFERENCES "public".blocks( block_id ) ON  DELETE SET NULL;
+ALTER TABLE "public".blocks ADD CONSTRAINT "fkey_blocks_previous_block_id_fkey" FOREIGN KEY ( "previous_block_id" ) REFERENCES "public".blocks(block_id) ON DELETE SET NULL;
 
 --Create new data type which will store block rewards info
-
 DROP FUNCTION IF EXISTS getblockrewards();
 DROP FUNCTION IF EXISTS calcblockreward();
 DROP FUNCTION IF EXISTS calcsupply();
@@ -45,12 +42,10 @@ DROP FUNCTION IF EXISTS calcsupply_test();
 
 DROP TYPE blockRewards;
 
-
 CREATE TYPE block_rewards AS
  (supply bigint, START int, distance bigint, milestones bigint[][]);
 
 -- Begin functions:
-
 CREATE OR REPLACE FUNCTION public.calculate_block_reward(block_height integer) RETURNS bigint LANGUAGE PLPGSQL IMMUTABLE AS $function$
 	DECLARE r block_rewards; mile int;
 	BEGIN
@@ -63,7 +58,6 @@ CREATE OR REPLACE FUNCTION public.calculate_block_reward(block_height integer) R
 		END IF;
 			RETURN r.milestones[mile];
 	END $function$ ;
-
 
 CREATE OR REPLACE FUNCTION public.calculate_supply(block_height integer) RETURNS bigint LANGUAGE PLPGSQL IMMUTABLE AS $function$
 	DECLARE
@@ -86,7 +80,6 @@ CREATE OR REPLACE FUNCTION public.calculate_supply(block_height integer) RETURNS
 	RETURN r.supply;
 	END $function$ ;
 
-
 CREATE OR REPLACE FUNCTION public.calculate_supply_test(height_start integer, height_end integer, expected_reward bigint) RETURNS boolean LANGUAGE PLPGSQL IMMUTABLE AS $function$
 	DECLARE
 		supply bigint;
@@ -101,7 +94,6 @@ CREATE OR REPLACE FUNCTION public.calculate_supply_test(height_start integer, he
 			END LOOP;
 		RETURN true;
 	END $function$ ;
-
 
 CREATE OR REPLACE FUNCTION public.get_block_rewards() RETURNS block_rewards LANGUAGE PLPGSQL IMMUTABLE AS $function$
 	DECLARE res block_rewards;
