@@ -23,14 +23,14 @@ CREATE TABLE IF NOT EXISTS "accounts" (
 	"balance" BIGINT NOT NULL DEFAULT 0
 );
 
--- Create function for maintain 'accounts' table
+-- Create function for maintaining 'accounts' table
 CREATE OR REPLACE FUNCTION on_transaction_insert() RETURNS TRIGGER LANGUAGE PLPGSQL AS $$
 	DECLARE
 		sender_address VARCHAR(22);
 		sender_pk BYTEA;
 		recipient_address VARCHAR(22);
 	BEGIN
-		-- Get accounts that are part of the transaction
+		-- Get sender and recipient accounts belonging to transaction
 		SELECT address, pk INTO sender_address, sender_pk FROM accounts WHERE address = NEW."senderId";
 		SELECT address INTO recipient_address FROM accounts WHERE address = NEW."recipientId";
 
@@ -38,7 +38,7 @@ CREATE OR REPLACE FUNCTION on_transaction_insert() RETURNS TRIGGER LANGUAGE PLPG
 			-- No sender address in accounts - create new account
 			INSERT INTO accounts (tx_id, pk, pk_tx_id, address) VALUES (NEW.id, NEW."senderPublicKey", NEW.id, NEW."senderId");
 		ELSIF sender_pk IS NULL THEN
-			-- Sender address exists, but no PK - update pk
+			-- Sender address exists, but no public key - update public key
 			UPDATE accounts SET pk = NEW."senderPublicKey", pk_tx_id = NEW.id WHERE accounts.address = NEW."senderId";
 		ELSIF sender_pk != NEW."senderPublicKey" THEN
 			RAISE check_violation USING MESSAGE = 'Transaction invalid - cannot change account public key';
@@ -68,7 +68,7 @@ CREATE TRIGGER on_transaction_insert
 	FOR EACH ROW
 	EXECUTE PROCEDURE on_transaction_insert();
 
--- Create function for rollback pk
+-- Create function for rollback of public key
 CREATE OR REPLACE FUNCTION pk_rollback() RETURNS TRIGGER LANGUAGE PLPGSQL AS $$
 	BEGIN
 		NEW.pk = NULL;
@@ -82,7 +82,7 @@ CREATE TRIGGER pk_rollback
 	WHEN (OLD.pk_tx_id IS NOT NULL AND NEW.pk_tx_id IS NULL)
 	EXECUTE PROCEDURE pk_rollback();
 
--- Create function for maintain 'accounts' table in case of rollback
+-- Create function for maintaining 'accounts' table in case of rollback
 CREATE OR REPLACE FUNCTION on_transaction_delete() RETURNS TRIGGER LANGUAGE PLPGSQL AS $$
 	DECLARE
 		sender_address VARCHAR(22);
