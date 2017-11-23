@@ -58,7 +58,6 @@ CREATE OR REPLACE FUNCTION on_transaction_insert() RETURNS TRIGGER LANGUAGE PLPG
 		IF NEW."recipientId" IS NOT NULL THEN
 			UPDATE accounts SET balance = accounts.balance+NEW.amount WHERE accounts.address = NEW."recipientId";
 		END IF;
-
 	RETURN NULL;
 END $$;
 
@@ -97,7 +96,6 @@ CREATE OR REPLACE FUNCTION on_transaction_delete() RETURNS TRIGGER LANGUAGE PLPG
 		IF OLD."recipientId" IS NOT NULL THEN
 			UPDATE accounts SET balance = accounts.balance-OLD.amount WHERE accounts.address = OLD."recipientId";
 		END IF;
-
 	RETURN NULL;
 END $$;
 
