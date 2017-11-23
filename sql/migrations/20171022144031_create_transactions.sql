@@ -37,8 +37,8 @@ CREATE INDEX idx_transactions_block_id
 ON "public".transactions ( block_id );
 
 CREATE OR REPLACE FUNCTION public.on_transaction_delete()
-  RETURNS trigger
-  LANGUAGE plpgsql
+	RETURNS trigger
+	LANGUAGE plpgsql
 AS $function$
 DECLARE
 	sender_address VARCHAR(22);
