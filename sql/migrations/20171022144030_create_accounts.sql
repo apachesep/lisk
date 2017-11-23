@@ -113,4 +113,4 @@ CREATE OR REPLACE FUNCTION public.revert_mem_account() RETURNS TRIGGER LANGUAGE 
 	RETURN NEW;
 END $function$ ;
 
-END;
+COMMIT;
