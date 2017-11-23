@@ -44,9 +44,9 @@ DECLARE
 	sender_address VARCHAR(22);
 	recipient_address VARCHAR(22);
 BEGIN
-	IF OLD."sender_address" IS NOT NULL THEN UPDATE accounts SET balance = accounts.balance+(OLD.amount+OLD.fee) WHERE accounts.address = OLD."sender_address";
+	IF OLD."sender_address" IS NOT NULL THEN UPDATE accounts SET balance = accounts.balance + (OLD.amount + OLD.fee) WHERE accounts.address = OLD."sender_address";
 	END IF;
-	IF OLD."recipient_address" IS NOT NULL THEN UPDATE accounts SET balance = accounts.balance-OLD.amount WHERE accounts.address = OLD."recipient_address";
+	IF OLD."recipient_address" IS NOT NULL THEN UPDATE accounts SET balance = accounts.balance - OLD.amount WHERE accounts.address = OLD."recipient_address";
 	END IF;
 	RETURN NULL;
 END $function$;
