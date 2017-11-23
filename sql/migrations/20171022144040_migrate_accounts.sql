@@ -49,15 +49,14 @@ FROM(
 ) AS t
 WHERE t."recipient_address" = a."address";
 
-
 -- Create new indexes
-  CREATE INDEX idx_accounts_public_key_transaction_id
-  ON "public".accounts( public_key_transaction_id );
+CREATE INDEX idx_accounts_public_key_transaction_id
+ON "public".accounts( public_key_transaction_id );
 
-  CREATE INDEX idx_accounts_address_upper
-  ON "public".accounts( upper((address)::text) );
+CREATE INDEX idx_accounts_address_upper
+ON "public".accounts( upper((address)::text) );
 
-  CREATE INDEX idx_accounts_balance
-  ON "public".accounts( balance );
+CREATE INDEX idx_accounts_balance
+ON "public".accounts( balance );
 
 END;
