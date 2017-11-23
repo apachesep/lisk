@@ -31,4 +31,4 @@ ON "public".second_signature ( "public_key" );
 CREATE INDEX idx_second_public_key
 ON "public".second_signature ( "second_public_key" );
 
-END;
+COMMIT;
