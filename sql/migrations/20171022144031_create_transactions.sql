@@ -6,36 +6,35 @@ BEGIN
 END
 $$;
 
-  -- Rename all columns for new schema
-  ALTER TABLE trs RENAME TO transactions;
-  ALTER TABLE transactions RENAME id TO "transaction_id";
-  ALTER TABLE transactions RENAME "rowId" TO "row_id";
-  ALTER TABLE transactions RENAME "blockId" TO "block_id";
-  ALTER TABLE transactions RENAME "senderPublicKey" TO "sender_public_key";
-  ALTER TABLE transactions RENAME "senderId" TO "sender_address";
-  ALTER TABLE transactions RENAME "recipientId" TO "recipient_address";
-  ALTER TABLE transactions RENAME "signSignature" TO "second_signature";
-  ALTER TABLE transactions RENAME "requesterPublicKey" TO "requester_public_key";
+-- Rename all columns for new schema
+ALTER TABLE trs RENAME TO transactions;
+ALTER TABLE transactions RENAME id TO "transaction_id";
+ALTER TABLE transactions RENAME "rowId" TO "row_id";
+ALTER TABLE transactions RENAME "blockId" TO "block_id";
+ALTER TABLE transactions RENAME "senderPublicKey" TO "sender_public_key";
+ALTER TABLE transactions RENAME "senderId" TO "sender_address";
+ALTER TABLE transactions RENAME "recipientId" TO "recipient_address";
+ALTER TABLE transactions RENAME "signSignature" TO "second_signature";
+ALTER TABLE transactions RENAME "requesterPublicKey" TO "requester_public_key";
 
-  -- Rename rowId sequence
-  ALTER SEQUENCE "public"."trs_rowId_seq" RENAME TO "transactions_row_id_seq";
+-- Rename rowId sequence
+ALTER SEQUENCE "public"."trs_rowId_seq" RENAME TO "transactions_row_id_seq";
 
-  --Add recipient public key column to transactions
-  ALTER TABLE transactions ADD COLUMN "recipient_public_key" BYTEA;
+--Add recipient public key column to transactions
+ALTER TABLE transactions ADD COLUMN "recipient_public_key" BYTEA;
 
+-- Transactions indexes
+CREATE INDEX idx_transactions_transaction_id
+ON "public".transactions( transaction_id );
 
-  -- Transactions indexes
-  CREATE INDEX idx_transactions_transaction_id
-  ON "public".transactions( transaction_id );
+CREATE INDEX idx_transactions_sender_address
+ON "public".transactions ( sender_address );
 
-  CREATE INDEX idx_transactions_sender_address
-  ON "public".transactions ( sender_address );
+CREATE INDEX idx_transactions_recipient_address
+ON "public".transactions ( recipient_address );
 
-  CREATE INDEX idx_transactions_recipient_address
-  ON "public".transactions ( recipient_address );
-
-  CREATE INDEX idx_transactions_block_id
-  ON "public".transactions ( block_id );
+CREATE INDEX idx_transactions_block_id
+ON "public".transactions ( block_id );
 
 CREATE OR REPLACE FUNCTION public.on_transaction_delete()
   RETURNS trigger
