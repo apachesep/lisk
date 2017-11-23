@@ -6,7 +6,8 @@ BEGIN
 END
 $$;
 
-/* Migrate blocks table */ /* Rename all columns for new schema */
+-- Migrate blocks table
+-- Rename all columns for new schema
 ALTER TABLE blocks RENAME id TO "block_id";
 ALTER TABLE blocks RENAME "rowId" TO "row_id";
 ALTER TABLE blocks RENAME "previousBlock" TO "previous_block_id";
@@ -34,7 +35,7 @@ ALTER INDEX "blocks_totalFee" RENAME TO "idx_blocks_total_fee";
 ALTER TABLE "public".blocks DROP CONSTRAINT "blocks_previousBlock_fkey";
 ALTER TABLE "public".blocks ADD CONSTRAINT "fkey_blocks_previous_block_id_fkey" FOREIGN KEY ( "previous_block_id" ) REFERENCES "public".blocks(block_id) ON DELETE SET NULL;
 
---Create new data type which will store block rewards info
+-- Create new data type for storing block rewards info
 DROP FUNCTION IF EXISTS getblockrewards();
 DROP FUNCTION IF EXISTS calcblockreward();
 DROP FUNCTION IF EXISTS calcsupply();
