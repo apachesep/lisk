@@ -105,4 +105,4 @@ CREATE TRIGGER on_transaction_insert
 	FOR EACH ROW
 	EXECUTE PROCEDURE on_transaction_insert();
 
-END;
+COMMIT;
