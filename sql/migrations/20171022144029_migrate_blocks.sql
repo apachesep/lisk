@@ -54,7 +54,7 @@ CREATE OR REPLACE FUNCTION public.calculate_block_reward(block_height integer) R
 		END IF;
 			SELECT * FROM get_block_rewards() INTO r; IF block_height < r.start THEN RETURN 0;
 		END IF;
-			mile := FLOOR((block_height-r.start)/r.distance)+1;
+			mile := FLOOR((block_height - r.start) / r.distance) + 1;
 			IF mile > array_length(r.milestones, 1) THEN mile := array_length(r.milestones, 1);
 		END IF;
 			RETURN r.milestones[mile];
@@ -69,12 +69,12 @@ CREATE OR REPLACE FUNCTION public.calculate_supply(block_height integer) RETURNS
 		END IF;
 			SELECT * FROM get_block_rewards() INTO r; IF block_height < r.start THEN RETURN r.supply;
 		END IF;
-		mile := FLOOR((block_height-r.start)/r.distance)+1;
+		mile := FLOOR((block_height-r.start) / r.distance) + 1;
 		IF mile > array_length(r.milestones, 1) THEN mile := array_length(r.milestones, 1);
 		END IF;
 		FOR m IN 1..mile LOOP
 			IF m = mile
-				THEN r.supply := r.supply + (block_height-r.start+1-r.distance*(m-1))*r.milestones[m];
+				THEN r.supply := r.supply + (block_height - r.start + 1 - r.distance * (m - 1)) * r.milestones[m];
 				ELSE r.supply := r.supply + r.distance*r.milestones[m];
 			END IF;
 		END LOOP;
@@ -86,7 +86,7 @@ CREATE OR REPLACE FUNCTION public.calculate_supply_test(height_start integer, he
 		supply bigint;
 		prev_supply bigint;
 	BEGIN
-		SELECT calculate_supply(height_start-1) INTO prev_supply;
+		SELECT calculate_supply(height_start - 1) INTO prev_supply;
 			FOR height IN height_start..height_end LOOP
 				SELECT calculate_supply(height) INTO supply;
 				IF (prev_supply+expected_reward) <> supply THEN RETURN false;
