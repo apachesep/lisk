@@ -95,10 +95,8 @@ CREATE CONSTRAINT TRIGGER on_transaction_delete
 			IF NEW."recipient_address" IS NOT NULL THEN
 				UPDATE accounts SET balance = accounts.balance+NEW.amount WHERE accounts.address = NEW."recipient_address";
 			END IF;
-
 		RETURN NULL;
 	END $$;
-
 
 -- Create trigger that will execute 'on_transaction_insert' function after insertion of transaction
 DROP TRIGGER on_transaction_insert on transactions;
