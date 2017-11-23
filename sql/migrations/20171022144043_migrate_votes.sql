@@ -62,4 +62,4 @@ ON "public".votes ( public_key );
 CREATE INDEX idx_votes_transaction_id
 ON "public".votes ( transaction_id );
 
-END;
+COMMIT;
