@@ -661,7 +661,7 @@ Transaction.prototype.apply = function (transaction, block, sender, cb) {
 
 	// Check confirmed sender balance
 	var amount = new bignum(transaction.amount.toString()).plus(transaction.fee.toString());
-	// TODO: check if this is done by pool in all the scenarios
+	// TODO: Check if this is done by pool in all the scenarios
 	var senderBalance = this.checkBalance(amount, 'balance', transaction, sender);
 
 	if (senderBalance.exceeded) {
@@ -673,7 +673,7 @@ Transaction.prototype.apply = function (transaction, block, sender, cb) {
 	this.scope.logger.trace('Logic/Transaction->apply', {sender: sender.address, balance: -amount, blockId: block.id, round: slots.calcRound(block.height)});
 
 	/**
-	 * calls apply for Transfer, Signature, Delegate, Vote, Multisignature,
+	 * Calls apply for Transfer, Signature, Delegate, Vote, Multisignature,
 	 * DApp, InTransfer or OutTransfer.
 	 */
 	__private.types[transaction.type].apply.call(this, transaction, block, sender, function (err) {
