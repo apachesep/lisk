@@ -6,7 +6,7 @@ BEGIN
 END
 $$;
 
---Apply transactions into new table, to populate new accounts table
+-- Apply transactions into new table, to populate new accounts table
 INSERT INTO "public".accounts(address, public_key, balance)
 SELECT
   mem.address,
@@ -14,7 +14,7 @@ SELECT
   mem.balance
 FROM mem_accounts mem;
 
---UPDATE all accounts with first transaction
+-- UPDATE all accounts with first transaction
 UPDATE "public".accounts AS a set transaction_id = t.transaction_id
 FROM(
   SELECT t."transaction_id", t."recipient_address"
@@ -22,7 +22,7 @@ FROM(
 ) AS t
 WHERE UPPER(t."recipient_address") = a."address";
 
---UPDATE genesis transaction ID
+-- UPDATE genesis transaction ID
 UPDATE "public".accounts AS a set transaction_id = t.transaction_id
 FROM(
   SELECT t."transaction_id", t."sender_address"
@@ -32,7 +32,7 @@ FROM(
 WHERE UPPER(t."sender_address") = a."address"
 AND a.transaction_id IS NULL;
 
---UPDATE all acounts with publickeys
+-- UPDATE all accounts with public keys
 UPDATE "public".accounts AS a set public_key_transaction_id = t.transaction_id
 FROM(
   SELECT t."transaction_id", t."sender_public_key"
@@ -40,7 +40,7 @@ FROM(
 ) AS t
 WHERE t."sender_public_key" = a."public_key";
 
---UPDATE all acounts with transaction ids
+-- UPDATE all accounts with transaction IDs
 UPDATE "public".accounts AS a set transaction_id = t.transaction_id
 FROM(
   SELECT t."transaction_id", t."recipient_address"
