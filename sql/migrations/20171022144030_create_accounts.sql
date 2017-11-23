@@ -17,8 +17,8 @@ CREATE TABLE "public".accounts (address varchar(22) NOT NULL,
 	CONSTRAINT idx_accounts_public_key UNIQUE (public_key)
 );
 
--- Create function that protects 'accounts' table balances to go negative
--- WARNING: That function allows send from all genesis addresses
+-- Create function that protects 'accounts' table balances from going negative
+-- WARNING: Function allows send from all genesis addresses
 CREATE OR REPLACE FUNCTION protect_accounts_balance() RETURNS TRIGGER LANGUAGE PLPGSQL AS $$
 	DECLARE
 		genesis_block_id VARCHAR(20);
@@ -27,7 +27,7 @@ CREATE OR REPLACE FUNCTION protect_accounts_balance() RETURNS TRIGGER LANGUAGE P
 		-- Get genesis block id
 		SELECT block_id INTO genesis_block_id FROM blocks WHERE height = 1 LIMIT 1;
 
-		-- Skip check if there is no genesis block in database (for case of deleting genesis block)
+		-- Skip check if there is no genesis block in database (in case of genesis block deletion)
 		IF genesis_block_id IS NULL THEN
 		    RETURN NEW;
 		END IF;
@@ -41,7 +41,7 @@ CREATE OR REPLACE FUNCTION protect_accounts_balance() RETURNS TRIGGER LANGUAGE P
 	RETURN NEW;
 END $$;
 
--- Create trigger that will execute 'protect_accounts_balance' function before update of account if update will result with negative balance
+-- Create trigger that will execute 'protect_accounts_balance' function before update of account if update will result in negative balance
 CREATE TRIGGER protect_accounts_balance
 	BEFORE UPDATE ON accounts
 	FOR EACH ROW WHEN (NEW.balance < 0)
