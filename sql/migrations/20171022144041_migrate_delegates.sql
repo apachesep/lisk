@@ -6,14 +6,14 @@ BEGIN
 END
 $$;
 
-
-/* Delegates Stuff */
+-- Rename columns on delegates table
 ALTER TABLE delegates RENAME tx_id TO "transaction_id";
 ALTER TABLE delegates RENAME pk TO "public_key";
 ALTER TABLE delegates RENAME voters_cnt TO "voters_count";
 ALTER TABLE delegates RENAME blocks_missed_cnt TO "blocks_missed_count";
 ALTER TABLE delegates RENAME blocks_forged_cnt TO "blocks_forged_count";
 
+-- Drop functions and triggers
 DROP FUNCTION getdelegateslist();
 DROP TRIGGER block_insert_delete ON blocks;
 DROP FUNCTION delegates_forged_blocks_cnt_update();
@@ -39,7 +39,7 @@ END IF;
 RETURN NULL;
 END $function$;
 
---Create trigger that will execute 'delegates_forged_blocks_cnt_update' after insertion or deletion of block
+-- Create trigger that will execute 'delegates_forged_blocks_cnt_update' after insertion or deletion of block
 CREATE CONSTRAINT TRIGGER block_insert_delete
 AFTER INSERT OR DELETE ON blocks
 DEFERRABLE INITIALLY DEFERRED
