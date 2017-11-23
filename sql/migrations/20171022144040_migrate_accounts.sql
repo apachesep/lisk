@@ -59,4 +59,4 @@ ON "public".accounts( upper((address)::text) );
 CREATE INDEX idx_accounts_balance
 ON "public".accounts( balance );
 
-END;
+COMMIT;
