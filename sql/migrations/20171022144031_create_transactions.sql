@@ -20,10 +20,10 @@ ALTER TABLE transactions RENAME "requesterPublicKey" TO "requester_public_key";
 -- Rename rowId sequence
 ALTER SEQUENCE "public"."trs_rowId_seq" RENAME TO "transactions_row_id_seq";
 
---Add recipient public key column to transactions
+-- Add recipient public key column to transactions
 ALTER TABLE transactions ADD COLUMN "recipient_public_key" BYTEA;
 
--- Transactions indexes
+-- Create transactions indexes
 CREATE INDEX idx_transactions_transaction_id
 ON "public".transactions( transaction_id );
 
@@ -60,14 +60,14 @@ CREATE CONSTRAINT TRIGGER on_transaction_delete
 	FOR EACH ROW
 	EXECUTE PROCEDURE on_transaction_delete();
 
-	-- Create function for maintain 'accounts' table
+	-- Create function for maintaining 'accounts' table
 	CREATE OR REPLACE FUNCTION on_transaction_insert() RETURNS TRIGGER LANGUAGE PLPGSQL AS $$
 		DECLARE
 			sender_address VARCHAR(22);
 			sender_public_key BYTEA;
 			recipient_address VARCHAR(22);
 		BEGIN
-			-- Get accounts that are part of the transaction
+			-- Get sender and recipient accounts belonging to transaction
 			SELECT address, public_key INTO sender_address, sender_public_key FROM accounts WHERE address = NEW."sender_address";
 			SELECT address INTO recipient_address FROM accounts WHERE address = NEW."recipient_address";
 
@@ -75,7 +75,7 @@ CREATE CONSTRAINT TRIGGER on_transaction_delete
 				-- No sender address in accounts - create new account
 				INSERT INTO accounts (transaction_id, public_key, public_key_transaction_id, address) VALUES (NEW.transaction_id, NEW."sender_public_key", NEW.transaction_id, NEW."sender_address");
 			ELSIF sender_public_key IS NULL THEN
-				-- Sender address exists, but no public_key - update public_key
+				-- Sender address exists, but no public key - update public key
 				UPDATE accounts SET public_key = NEW."sender_public_key", public_key_transaction_id = NEW.transaction_id WHERE accounts.address = NEW."sender_address";
 			ELSIF sender_public_key != NEW."sender_public_key" THEN
 				RAISE check_violation USING MESSAGE = 'Transaction invalid - cannot change account public key';
