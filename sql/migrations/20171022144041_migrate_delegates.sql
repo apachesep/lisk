@@ -240,5 +240,4 @@ CREATE OR REPLACE FUNCTION public.get_delegates_list() RETURNS text[] LANGUAGE p
 	RETURN list;
 END $function$;
 
-
-END;
+COMMIT;
