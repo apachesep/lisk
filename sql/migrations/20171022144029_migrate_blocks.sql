@@ -43,35 +43,32 @@ DROP FUNCTION IF EXISTS calcsupply_test();
 
 DROP TYPE blockRewards;
 
-CREATE TYPE block_rewards AS
- (supply bigint, START int, distance bigint, milestones bigint[][]);
+CREATE TYPE block_rewards AS (supply bigint, START int, distance bigint, milestones bigint[][);
 
 -- Begin functions:
 CREATE OR REPLACE FUNCTION public.calculate_block_reward(block_height integer) RETURNS bigint LANGUAGE PLPGSQL IMMUTABLE AS $function$
-	DECLARE r block_rewards; mile int;
+	DECLARE
+		r block_rewards;
+		mile int;
 	BEGIN
-			IF block_height IS NULL OR block_height <= 0 THEN RETURN NULL;
-		END IF;
-			SELECT * FROM get_block_rewards() INTO r; IF block_height < r.start THEN RETURN 0;
-		END IF;
-			mile := FLOOR((block_height - r.start) / r.distance) + 1;
-			IF mile > array_length(r.milestones, 1) THEN mile := array_length(r.milestones, 1);
-		END IF;
-			RETURN r.milestones[mile];
-	END $function$ ;
+		IF block_height IS NULL OR block_height <= 0 THEN RETURN NULL; END IF;
+		SELECT * FROM get_block_rewards() INTO r;
+		IF block_height < r.start THEN RETURN 0; END IF;
+		mile := FLOOR((block_height - r.start) / r.distance) + 1;
+		IF mile > array_length(r.milestones, 1) THEN mile := array_length(r.milestones, 1); END IF;
+	RETURN r.milestones[mile];
+END $function$ ;
 
 CREATE OR REPLACE FUNCTION public.calculate_supply(block_height integer) RETURNS bigint LANGUAGE PLPGSQL IMMUTABLE AS $function$
 	DECLARE
-		r block_rewards; mile int;
+		r block_rewards;
+		mile int;
 	BEGIN
-		IF block_height IS NULL OR block_height <= 0
-			THEN RETURN NULL;
-		END IF;
-			SELECT * FROM get_block_rewards() INTO r; IF block_height < r.start THEN RETURN r.supply;
-		END IF;
+		IF block_height IS NULL OR block_height <= 0 THEN RETURN NULL; END IF;
+		SELECT * FROM get_block_rewards() INTO r;
+		IF block_height < r.start THEN RETURN r.supply; END IF;
 		mile := FLOOR((block_height-r.start) / r.distance) + 1;
-		IF mile > array_length(r.milestones, 1) THEN mile := array_length(r.milestones, 1);
-		END IF;
+		IF mile > array_length(r.milestones, 1) THEN mile := array_length(r.milestones, 1); END IF;
 		FOR m IN 1..mile LOOP
 			IF m = mile
 				THEN r.supply := r.supply + (block_height - r.start + 1 - r.distance * (m - 1)) * r.milestones[m];
@@ -79,7 +76,7 @@ CREATE OR REPLACE FUNCTION public.calculate_supply(block_height integer) RETURNS
 			END IF;
 		END LOOP;
 	RETURN r.supply;
-	END $function$ ;
+END $function$ ;
 
 CREATE OR REPLACE FUNCTION public.calculate_supply_test(height_start integer, height_end integer, expected_reward bigint) RETURNS boolean LANGUAGE PLPGSQL IMMUTABLE AS $function$
 	DECLARE
@@ -89,12 +86,11 @@ CREATE OR REPLACE FUNCTION public.calculate_supply_test(height_start integer, he
 		SELECT calculate_supply(height_start - 1) INTO prev_supply;
 			FOR height IN height_start..height_end LOOP
 				SELECT calculate_supply(height) INTO supply;
-				IF (prev_supply+expected_reward) <> supply THEN RETURN false;
-				END IF;
+				IF (prev_supply+expected_reward) <> supply THEN RETURN false; END IF;
 				prev_supply := supply;
 			END LOOP;
-		RETURN true;
-	END $function$ ;
+	RETURN true;
+END $function$ ;
 
 CREATE OR REPLACE FUNCTION public.get_block_rewards() RETURNS block_rewards LANGUAGE PLPGSQL IMMUTABLE AS $function$
 	DECLARE res block_rewards;
@@ -107,7 +103,7 @@ CREATE OR REPLACE FUNCTION public.get_block_rewards() RETURNS block_rewards LANG
 		res.start = start;
 		res.distance = distance;
 		res.milestones = milestones;
-		RETURN res;
-	END $function$ ;
+	RETURN res;
+END $function$ ;
 
 END;
