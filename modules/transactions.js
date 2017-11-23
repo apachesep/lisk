@@ -472,6 +472,7 @@ Transactions.prototype.applyUnconfirmed = function (transaction, sender, cb) {
 
 	// TODO: Remove applyUnconfirmed entirely
 	return setImmediate(cb);
+
 	if (!sender && transaction.blockId !== library.genesisblock.block.id) {
 		return setImmediate(cb, 'Invalid block id');
 	} else {
