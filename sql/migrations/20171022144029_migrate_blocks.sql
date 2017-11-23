@@ -106,4 +106,4 @@ CREATE OR REPLACE FUNCTION public.get_block_rewards() RETURNS block_rewards LANG
 	RETURN res;
 END $function$ ;
 
-END;
+COMMIT;
